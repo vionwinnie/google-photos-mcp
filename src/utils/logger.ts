@@ -1,5 +1,4 @@
 import winston from 'winston';
-import config from './config.js';
 
 // Define log format
 const logFormat = winston.format.combine(
@@ -10,14 +9,21 @@ const logFormat = winston.format.combine(
 );
 
 // Create the logger
+const transports: winston.transport[] = [
+  new winston.transports.File({ filename: 'error.log', level: 'error' }),
+  new winston.transports.File({ filename: 'combined.log' }),
+];
+
+// Only add Console transport if NOT in stdio mode
+if (!process.argv.includes('--stdio')) {
+  transports.push(new winston.transports.Console());
+}
+
+// Set default log level to 'info'.
 const logger = winston.createLogger({
-  level: config.logger.level,
+  level: 'info',
   format: logFormat,
-  transports: [
-    new winston.transports.Console(),
-    new winston.transports.File({ filename: 'error.log', level: 'error' }),
-    new winston.transports.File({ filename: 'combined.log' }),
-  ],
+  transports,
 });
 
 // Add a stream for using with express-winston

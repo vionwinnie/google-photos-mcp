@@ -18,9 +18,13 @@ import { setupAuthRoutes } from './auth/routes.js';
 import { getTokens, getFirstAvailableTokens, TokenData } from './auth/tokens.js';
 import { setupOAuthClient, searchPhotosByText, listAlbums, getPhoto, getPhotoAsBase64, getAlbum } from './api/photos.js';
 import logger from './utils/logger.js';
+import config from './utils/config.js';
 
 // Load environment variables
 dotenv.config();
+
+// Set logger level from config
+logger.level = config.logger.level;
 
 // Create the MCP server instance
 const server = new Server(

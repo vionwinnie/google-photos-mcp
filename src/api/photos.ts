@@ -171,7 +171,7 @@ export async function listAlbums(
       nextPageToken: response.data.nextPageToken,
     };
   } catch (error) {
-    logger.error(`Failed to list albums: ${error instanceof Error ? error.message : String(error)}`);
+    logger.error(`Failed to list albums: ${error instanceof Error ? error.message : String(error)} ${getApiErrorDetails(error)}`);
     throw new Error('Failed to list albums');
   }
 }
@@ -190,7 +190,7 @@ export async function getAlbum(oauth2Client: OAuth2Client, albumId: string): Pro
 
     return response.data as Album;
   } catch (error) {
-    logger.error(`Failed to get album: ${error instanceof Error ? error.message : String(error)}`);
+    logger.error(`Failed to get album: ${error instanceof Error ? error.message : String(error)} ${getApiErrorDetails(error)}`);
     throw new Error('Failed to get album');
   }
 }
@@ -243,7 +243,7 @@ export async function searchPhotos(
       nextPageToken: response.data.nextPageToken,
     };
   } catch (error) {
-    logger.error(`Failed to search photos: ${error instanceof Error ? error.message : String(error)}`);
+    logger.error(`Failed to search photos: ${error instanceof Error ? error.message : String(error)} ${getApiErrorDetails(error)}`);
     throw new Error('Failed to search photos');
   }
 }
@@ -267,7 +267,7 @@ export async function listAlbumPhotos(
       includeLocation
     );
   } catch (error) {
-    logger.error(`Failed to list album photos: ${error instanceof Error ? error.message : String(error)}`);
+    logger.error(`Failed to list album photos: ${error instanceof Error ? error.message : String(error)} ${getApiErrorDetails(error)}`);
     throw new Error('Failed to list album photos');
   }
 }
@@ -305,7 +305,7 @@ export async function getPhoto(
 
     return photo;
   } catch (error) {
-    logger.error(`Failed to get photo: ${error instanceof Error ? error.message : String(error)}`);
+    logger.error(`Failed to get photo: ${error instanceof Error ? error.message : String(error)} ${getApiErrorDetails(error)}`);
     throw new Error('Failed to get photo');
   }
 }
@@ -319,7 +319,7 @@ export async function getPhotoAsBase64(url: string): Promise<string> {
     const buffer = Buffer.from(response.data, 'binary');
     return buffer.toString('base64');
   } catch (error) {
-    logger.error(`Failed to get photo as base64: ${error instanceof Error ? error.message : String(error)}`);
+    logger.error(`Failed to get photo as base64: ${error instanceof Error ? error.message : String(error)} ${getApiErrorDetails(error)}`);
     throw new Error('Failed to get photo as base64');
   }
 }
@@ -436,7 +436,15 @@ export async function searchPhotosByText(
       includeLocationSearch
     );
   } catch (error) {
-    logger.error(`Failed to search photos by text: ${error instanceof Error ? error.message : String(error)}`);
+    logger.error(`Failed to search photos by text: ${error instanceof Error ? error.message : String(error)} ${getApiErrorDetails(error)}`);
     throw new Error('Failed to search photos by text');
   }
+}
+
+// Helper to extract more details from API errors
+function getApiErrorDetails(error: any): string {
+  if (error.response) {
+    return `status: ${error.response.status}, data: ${JSON.stringify(error.response.data)}, headers: ${JSON.stringify(error.response.headers)}`;
+  }
+  return '';
 }

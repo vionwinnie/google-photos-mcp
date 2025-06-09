@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import path from 'path';
+import logger from './logger.js';
 
 // Load environment variables
 dotenv.config();
@@ -10,9 +11,11 @@ export const config = {
     clientId: process.env.GOOGLE_CLIENT_ID || '',
     clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
     redirectUri: process.env.GOOGLE_REDIRECT_URI || 'http://localhost:3000/auth/callback',
-    scopes: [
-      'https://www.googleapis.com/auth/photoslibrary.readonly',
-    ],
+    scopes: process.env.GOOGLE_SCOPES
+      ? process.env.GOOGLE_SCOPES.split(/[ ,]+/)
+      : [
+          'https://www.googleapis.com/auth/photospicker.mediaitems.readonly',
+        ],
   },
   
   // Server Configuration
@@ -46,7 +49,7 @@ const requiredEnvVars = [
 
 requiredEnvVars.forEach(envVar => {
   if (!process.env[envVar]) {
-    console.warn(`Warning: Required environment variable ${envVar} is not set.`);
+    logger.warn(`Warning: Required environment variable ${envVar} is not set.`, { trace: new Error().stack });
   }
 });
 
